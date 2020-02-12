@@ -1,0 +1,19 @@
+{
+        "servicerestart": "service nginx restart",
+        "serviceget": "/usr/local/bin/fusionpbxget",
+        "serviceset": "/usr/local/bin/fusionpbxset",
+        "options": {
+                "sslkey": {
+                        "type": "string",
+                        "name": "SSL Private Key",
+                        "description": "Put your SSL Private Key here.",
+                        "requirerestart": true
+                },
+                "sslcert": {
+                        "type": "string",
+                        "name": "SSL Certificate",
+                        "description": "Put your SSL Certificate here.",
+                        "requirerestart": true
+                }
+        }
+}

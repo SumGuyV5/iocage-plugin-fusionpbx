@@ -1,0 +1,38 @@
+#!/bin/sh
+
+SHOWSSL=TRUE
+MESSAGE="Can not show ssl private.key or certificate.crt... Change SNOWSSL to TRUE the /usr/local/bin/fusionpbxget script."
+
+get_all()
+{
+  get_sslkey
+  get_sslcert
+}
+
+get_sslkey()
+{
+  if [ $SHOWSSL = TRUE ] ; then
+    sslkey=$(cat /usr/local/etc/nginx/server.key)
+  else
+    sslkey=$MESSAGE
+  fi
+  echo "$sslkey"
+}
+
+get_sslcert()
+{
+  if [ $SHOWSSL = TRUE ] ; then
+    sslcert=$(cat /usr/local/etc/nginx/server.crt)
+  else
+    sslcert=$MESSAGE
+  fi
+  echo "$sslcert"
+}
+
+# Stub for something which gets quasselsettings
+case $1 in
+  getall) get_all ;;
+	sslkey) get_sslkey ;;
+	sslcert) get_sslcert ;;
+	*) echo "Unknown option" ;;
+esac
