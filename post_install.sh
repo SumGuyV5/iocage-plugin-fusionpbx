@@ -176,7 +176,7 @@ sysrc postgresql_enable="YES"
 su -m postgres -c '/usr/local/bin/pg_ctl -D /var/db/postgres/data11 -l logfile start'
 
 #restart the service
-service postgresql restart
+service postgresql start
 
 su -m postgres -c psql <<EOF
 CREATE DATABASE fusionpbx;
@@ -206,6 +206,7 @@ service fail2ban restart
 cwd=$(pwd)
 
 #database details
+database
 database_username=fusionpbx
 database_password=$(openssl rand -base64 20 | md5 | head -c20)
 
@@ -234,7 +235,7 @@ domain_name=$(ifconfig $interface_name | grep 'inet ' | awk '{print $2}')
 domain_uuid=$(uuidgen);
 
 #add the domain name
-psql --host=$database_host --port=$database_port --username=$database_username -c "insert into v_domains (domain_uuid, domain_name, domain_enabled) values('$domain_uuid', '$domain_name', 'true');"
+psql --username=$database_username -c "insert into v_domains (domain_uuid, domain_name, domain_enabled) values('$domain_uuid', '$domain_name', 'true');"
 
 #app defaults
 cd /usr/local/www/fusionpbx && /usr/local/bin/php /usr/local/www/fusionpbx/core/upgrade/upgrade_domains.php
@@ -247,20 +248,20 @@ user_name='admin'
 user_password=$(openssl rand -base64 20 | md5 | head -c20)
 
 password_hash=$(php -r "echo md5('$user_salt$user_password');");
-psql --host=$database_host --port=$database_port --username=$database_username -t -c "insert into v_users (user_uuid, domain_uuid, username, password, salt, user_enabled) values('$user_uuid', '$domain_uuid', '$user_name', '$password_hash', '$user_salt', 'true');"
+psql --username=$database_username -t -c "insert into v_users (user_uuid, domain_uuid, username, password, salt, user_enabled) values('$user_uuid', '$domain_uuid', '$user_name', '$password_hash', '$user_salt', 'true');"
 
 #get the superadmin group_uuid
-group_uuid=$(psql --host=$database_host --port=$database_port --username=$database_username -t -c "select group_uuid from v_groups where group_name = 'superadmin';");
+group_uuid=$(psql --username=$database_username -t -c "select group_uuid from v_groups where group_name = 'superadmin';");
 group_uuid=$(echo $group_uuid | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
 
 #add the user to the group
 user_group_uuid=$(/usr/local/bin/php /usr/local/www/fusionpbx/resources/uuid.php);
 group_name=superadmin
 
-psql --host=$database_host --port=$database_port --username=$database_username -c "insert into v_group_users (group_user_uuid, domain_uuid, group_name, group_uuid, user_uuid) values('$user_group_uuid', '$domain_uuid', '$group_name', '$group_uuid', '$user_uuid');"
+psql --username=$database_username -c "insert into v_group_users (group_user_uuid, domain_uuid, group_name, group_uuid, user_uuid) values('$user_group_uuid', '$domain_uuid', '$group_name', '$group_uuid', '$user_uuid');"
 
 #add the local_ip_v4 address
-psql --host=$database_host --port=$database_port --username=$database_username -t -c "insert into v_vars (var_uuid, var_name, var_value, var_category, var_order, var_enabled) values ('4507f7a9-2cbb-40a6-8799-f8f168082585', 'local_ip_v4', '$local_ip_v4', 'Defaults', '0', 'true');";
+psql --username=$database_username -t -c "insert into v_vars (var_uuid, var_name, var_value, var_category, var_order, var_enabled) values ('4507f7a9-2cbb-40a6-8799-f8f168082585', 'local_ip_v4', '$local_ip_v4', 'Defaults', '0', 'true');";
 
 #app defaults
 cd /usr/local/www/fusionpbx && php /usr/local/www/fusionpbx/core/upgrade/upgrade_domains.php
@@ -282,7 +283,7 @@ sed -i' ' -e s:"{v_project_path}::" $conf_dir/autoload_configs/xml_cdr.conf.xml
 sed -i' ' -e s:"{v_user}:$xml_cdr_username:" $conf_dir/autoload_configs/xml_cdr.conf.xml
 sed -i' ' -e s:"{v_pass}:$xml_cdr_password:" $conf_dir/autoload_configs/xml_cdr.conf.xml
 
-service freeswitch restart
+# service freeswitch restart
 
 #welcome message
 echo "Installation has completed."
