@@ -1,4 +1,5 @@
 #!/bin/sh -x
+
 mkdir -p /var/cache/fusionpbx/
 mkdir -p /var/www/letsencrypt/
 mkdir -p /usr/local/etc/nginx/conf.d/
@@ -9,6 +10,9 @@ mkdir -p /usr/local/etc/freeswitch/
 interface_name=$(ifconfig -l | awk '{print $1}')
 if [ .$interface_name = .'lo0' ]; then
   interface_name=$(ifconfig -l | awk '{print $2}')
+fi
+if [ .$interface_name = .'pflog0' ]; then
+  interface_name=$(ifconfig -l | awk '{print $3}')
 fi
 
 #get the ip address
