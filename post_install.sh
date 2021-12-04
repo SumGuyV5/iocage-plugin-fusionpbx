@@ -2,7 +2,7 @@
 interface=$(ifconfig -l | awk '{print $1}')
 if [ .$interface = .'lo0' ]; then
 	interface=$(ifconfig -l | awk '{print $2}')
-	if [ .$interface = .'epair0b' ]; then
+	if [ .$interface = .'pflog0' ]; then
 		interface=$(ifconfig -l | awk '{print $3}')
 	fi
 fi
