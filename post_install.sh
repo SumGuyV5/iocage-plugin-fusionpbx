@@ -20,6 +20,7 @@ find /usr/src/fusionpbx-install.sh/freebsd/ -type f -name '*.sh' -exec sed -i .b
 sed -i' ' -e s:'system_branch=.*:system_branch=stable:g' resources/config.sh
 sed -i' ' -e s:'database_version=.*:database_version=13:g' resources/config.sh
 sed -i' ' -e s:"interface_name=.*:interface_name=${interface}:g" resources/config.sh
+sed -i' ' -e s:'portsnap_enabled=.*:portsnap_enabled=false:g' resources/config.sh
 
 #fail2ban is now using py38
 sed -i' ' -e s:'pkg install --yes py37-fail2ban:pkg install --yes py38-fail2ban:g' resources/fail2ban.sh
