@@ -1,4 +1,6 @@
 #!/bin/sh -x
+IP_ADDRESS=$(ifconfig | grep -E 'inet.[0-9]' | grep -v '127.0.0.1' | awk '{ print $2}')
+
 interface=$(ifconfig -l | awk '{print $1}')
 if [ .$interface = .'lo0' ]; then
 	interface=$(ifconfig -l | awk '{print $2}')
@@ -21,6 +23,7 @@ sed -i' ' -e s:'system_branch=.*:system_branch=stable:g' resources/config.sh
 sed -i' ' -e s:'database_version=.*:database_version=13:g' resources/config.sh
 sed -i' ' -e s:"interface_name=.*:interface_name=${interface}:g" resources/config.sh
 sed -i' ' -e s:'portsnap_enabled=.*:portsnap_enabled=false:g' resources/config.sh
+sed -i' ' -e s:'php_version=.*:php_version=7.4:g' resources/config.sh
 
 #fail2ban is now using py38
 sed -i' ' -e s:'pkg install --yes py37-fail2ban:pkg install --yes py38-fail2ban:g' resources/fail2ban.sh
@@ -31,3 +34,5 @@ sed -i' ' -e '/echo " / s|$| >> /root/PLUGIN_INFO|' resources/finish.sh
 sed -i '' -e '141s|echo "" >>|echo "" >|g' resources/finish.sh
 
 ./install.sh
+
+echo -e 'go to https://${IP_ADDRESS}\n ' >> /root/PLUGIN_INFO
