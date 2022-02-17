@@ -35,4 +35,4 @@ sed -i '' -e '141s|echo "" >>|echo "" >|g' resources/finish.sh
 
 ./install.sh
 
-echo -e 'go to https://${IP_ADDRESS}\n ' >> /root/PLUGIN_INFO
+echo -e "go to https://${IP_ADDRESS}\n" >> /root/PLUGIN_INFO
